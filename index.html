@@ -1,0 +1,83 @@
+
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Enhance Customer Portal</title>
+
+      <script>
+        (function () {
+          function stringifyError(err) {
+            if (!err) return '';
+            if (typeof err === 'string') return err;
+            if (err instanceof Error) return err.stack || err.message || String(err);
+            try {
+              return JSON.stringify(err);
+            } catch (_e) {
+              return String(err);
+            }
+          }
+
+          function showOverlay(title, err) {
+            try {
+              var existing = document.getElementById('__xylem_fatal_error__');
+              if (existing) existing.remove();
+
+              var wrap = document.createElement('div');
+              wrap.id = '__xylem_fatal_error__';
+              wrap.style.position = 'fixed';
+              wrap.style.inset = '0';
+              wrap.style.zIndex = '2147483647';
+              wrap.style.background = 'rgba(255,255,255,0.98)';
+              wrap.style.color = '#111827';
+              wrap.style.fontFamily = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
+              wrap.style.padding = '16px';
+              wrap.style.overflow = 'auto';
+
+              var h = document.createElement('div');
+              h.textContent = title || 'Application error';
+              h.style.fontSize = '14px';
+              h.style.fontWeight = '700';
+              h.style.marginBottom = '8px';
+
+              var p = document.createElement('div');
+              p.textContent = 'The app crashed while loading. See details below (and open DevTools Console for full info).';
+              p.style.fontSize = '12px';
+              p.style.marginBottom = '12px';
+
+              var pre = document.createElement('pre');
+              pre.textContent = stringifyError(err);
+              pre.style.whiteSpace = 'pre-wrap';
+              pre.style.fontSize = '12px';
+              pre.style.lineHeight = '1.4';
+              pre.style.padding = '12px';
+              pre.style.border = '1px solid rgba(0,0,0,0.12)';
+              pre.style.borderRadius = '12px';
+              pre.style.background = '#f9fafb';
+
+              wrap.appendChild(h);
+              wrap.appendChild(p);
+              wrap.appendChild(pre);
+              document.body.appendChild(wrap);
+            } catch (_err) {
+              // ignore
+            }
+          }
+
+          window.addEventListener('error', function (e) {
+            showOverlay('Uncaught error', e && (e.error || e.message));
+          });
+          window.addEventListener('unhandledrejection', function (e) {
+            showOverlay('Unhandled promise rejection', e && e.reason);
+          });
+        })();
+      </script>
+    </head>
+
+    <body>
+      <div id="root"></div>
+      <script type="module" src="/src/main.tsx"></script>
+    </body>
+  </html>
+  
