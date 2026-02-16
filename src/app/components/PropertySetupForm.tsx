@@ -833,164 +833,172 @@ export const PropertySetupForm: React.FC<PropertySetupFormProps> = ({ onComplete
   };
 
   return (
-    <div className="min-h-screen bg-[#F0FDF4]/60 py-8 px-4 flex items-center justify-center">
-      <div className="w-full max-w-4xl">
-        <Card className="border-0 shadow-2xl shadow-emerald-100/50 rounded-3xl overflow-hidden bg-white/80 backdrop-blur-xl ring-1 ring-white/50">
-          
-          {/* Header */}
-          <div className="bg-white/50 border-b border-emerald-100/50 p-6 md:p-8">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-emerald-950 tracking-tight">เพิ่มบ้านใหม่</h1>
-                <p className="text-emerald-600/70 mt-1">กรอกข้อมูลให้ครบถ้วนเพื่อเริ่มใช้บริการ</p>
-              </div>
-              {onCancel && (
-                <Button 
-                  type="button" 
-                  variant="ghost" 
-                  size="icon" 
-                  onClick={onCancel} 
-                  className="rounded-full h-10 w-10 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </Button>
-              )}
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-100 sticky top-0 z-20">
+        <div className="p-4 md:p-6">
+          {/* Top Bar */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900">เพิ่มบ้านใหม่</h1>
+              <p className="text-sm text-gray-500 mt-1">กรอกข้อมูลให้ครบถ้วนเพื่อเริ่มใช้บริการ</p>
             </div>
-
-            {/* แสดงบริการที่เลือก (ถ้ามี) */}
-            {selectedService && (
-              <div className="mb-6 p-4 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl border border-emerald-200/50">
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center flex-shrink-0">
-                    <Sparkles className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-sm font-bold text-emerald-900">
-                        บริการที่เลือก
-                      </h3>
-                      <span className="text-xs bg-emerald-500 text-white px-2 py-0.5 rounded-full font-medium">
-                        {selectedService.serviceType === 'design' ? 'ออกแบบสวน' : 
-                         selectedService.serviceType === 'landscape' ? 'จัดสวน' : 
-                         selectedService.serviceType === 'maintenance' ? 'ดูแลสวน' : 'บริการ'}
-                      </span>
-                    </div>
-                    <p className="text-sm text-emerald-700">
-                      {selectedService.package?.name || 'แพ็คเกจพิเศษ'}
-                      {selectedService.package?.price && (
-                        <span className="ml-2 font-semibold">
-                          ฿{selectedService.package.price.toLocaleString()}
-                        </span>
-                      )}
-                    </p>
-                  </div>
-                </div>
-              </div>
+            {onCancel && (
+              <Button 
+                type="button" 
+                variant="ghost" 
+                size="icon" 
+                onClick={onCancel} 
+                className="rounded-lg h-10 w-10 bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </Button>
             )}
-
-            {/* Custom Progress Stepper - Horizontal on Desktop */}
-            <div className="relative mx-auto max-w-2xl px-4">
-              <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-100 rounded-full -translate-y-1/2 -z-10" />
-              <div 
-                className="absolute top-1/2 left-0 h-1 bg-emerald-500 rounded-full -translate-y-1/2 transition-all duration-500 ease-out -z-10"
-                style={{ width: `${(currentStep / (STEPS.length - 1)) * 100}%` }} 
-              />
-              
-              <div className="flex justify-between items-center w-full">
-                {STEPS.map((step, index) => {
-                  const Icon = step.icon;
-                  const isActive = index === currentStep;
-                  const isCompleted = index < currentStep;
-
-                  return (
-                    <div key={index} className="flex flex-col items-center gap-2 relative bg-white px-2 py-1 rounded-xl">
-                      <div 
-                        className={cn(
-                          "w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center border-4 transition-all duration-300 shadow-sm",
-                          isActive 
-                            ? "border-emerald-100 bg-emerald-500 text-white scale-110 shadow-emerald-200" 
-                            : isCompleted
-                              ? "border-emerald-500 bg-white text-emerald-500"
-                              : "border-gray-100 bg-white text-gray-300"
-                        )}
-                      >
-                       {isCompleted ? <Check className="w-5 h-5 md:w-6 md:h-6" /> : <Icon className="w-5 h-5 md:w-6 md:h-6" />}
-                      </div>
-                      <span className={cn(
-                        "text-[10px] md:text-xs font-bold uppercase tracking-wider absolute -bottom-6 w-24 text-center transition-colors duration-300",
-                        isActive ? "text-emerald-700" : isCompleted ? "text-emerald-600/60" : "text-gray-300"
-                      )}>
-                        {step.title}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-            
-            {/* Spacer for labels */}
-            <div className="h-6 md:h-4" /> 
           </div>
 
-          <CardContent className="p-6 md:p-10 min-h-[400px]">
-             {submitError && (
-              <Alert variant="destructive" className="mb-8 bg-red-50 border-red-100 text-red-900 rounded-xl">
-                <XCircle className="h-5 w-5" />
-                <AlertTitle className="font-bold">เกิดข้อผิดพลาด</AlertTitle>
-                <AlertDescription>{submitError}</AlertDescription>
-              </Alert>
+          {/* แสดงบริการที่เลือก (ถ้ามี) */}
+          {selectedService && (
+            <div className="mb-6 p-4 bg-gradient-to-r from-emerald-50 to-cyan-50 rounded-xl border border-emerald-200/50">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-lg bg-emerald-500 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="text-sm font-bold text-emerald-900">
+                      บริการที่เลือก
+                    </h3>
+                    <span className="text-xs bg-emerald-600 text-white px-2.5 py-1 rounded-full font-medium">
+                      {selectedService.serviceType === 'design' ? 'ออกแบบสวน' : 
+                       selectedService.serviceType === 'landscape' ? 'จัดสวน' : 
+                       selectedService.serviceType === 'maintenance' ? 'ดูแลสวน' : 'บริการ'}
+                    </span>
+                  </div>
+                  <p className="text-sm text-emerald-700">
+                    {selectedService.package?.name || 'แพ็คเกจพิเศษ'}
+                    {selectedService.package?.price && (
+                      <span className="ml-2 font-bold">
+                        ฿{selectedService.package.price.toLocaleString()}
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Custom Progress Stepper */}
+          <div className="max-w-2xl mx-auto">
+            <div className="flex justify-between items-center gap-2 md:gap-0">
+              {STEPS.map((step, index) => {
+                const Icon = step.icon;
+                const isActive = index === currentStep;
+                const isCompleted = index < currentStep;
+
+                return (
+                  <div key={index} className="flex flex-col items-center flex-1">
+                    <div 
+                      className={cn(
+                        "w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300 flex-shrink-0 mb-2",
+                        isActive 
+                          ? "border-emerald-600 bg-emerald-600 text-white shadow-lg shadow-emerald-600/20" 
+                          : isCompleted
+                            ? "border-emerald-600 bg-emerald-50 text-emerald-600"
+                            : "border-gray-200 bg-white text-gray-400"
+                      )}
+                    >
+                     {isCompleted ? <Check className="w-5 h-5 md:w-6 md:h-6" /> : <Icon className="w-5 h-5 md:w-6 md:h-6" />}
+                    </div>
+                    <span className={cn(
+                      "text-xs font-bold text-center transition-colors duration-300",
+                      isActive ? "text-emerald-700" : isCompleted ? "text-emerald-600/60" : "text-gray-400"
+                    )}>
+                      {step.title}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+            
+            {/* Progress Line */}
+            <div className="flex gap-2 md:gap-0 mx-auto mt-3">
+              {STEPS.map((_, index) => (
+                <div 
+                  key={index}
+                  className={cn(
+                    "h-1 rounded-full transition-colors duration-300 flex-1",
+                    index < currentStep ? "bg-emerald-600" : "bg-gray-200"
+                  )}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="px-4 md:px-6 py-6 max-w-4xl mx-auto">
+        {submitError && (
+          <Alert variant="destructive" className="mb-6 bg-red-50 border-red-100 text-red-900 rounded-xl">
+            <XCircle className="h-5 w-5" />
+            <AlertTitle className="font-bold">เกิดข้อผิดพลาด</AlertTitle>
+            <AlertDescription>{submitError}</AlertDescription>
+          </Alert>
+        )}
+
+        <div className="bg-white rounded-2xl border border-gray-100 p-6 md:p-8">
+          {renderStepContent()}
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="sticky bottom-0 bg-white border-t border-gray-100 p-4 md:p-6">
+        <div className="max-w-4xl mx-auto flex justify-between items-center gap-3">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={handleBack}
+            disabled={currentStep === 0 || isSubmitting}
+            className={cn(
+              "text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-4 md:px-6 rounded-lg",
+              currentStep === 0 && "invisible"
             )}
+          >
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            ย้อนกลับ
+          </Button>
 
-            {renderStepContent()}
-          </CardContent>
+          <div className="flex items-center gap-3 md:gap-4 flex-1 md:flex-none">
+            {/* Step Indicator Text (Mobile) */}
+            <span className="text-xs text-gray-500 font-medium md:hidden">
+              ขั้นตอนที่ {currentStep + 1}/{STEPS.length}
+            </span>
 
-          <CardFooter className="flex justify-between items-center border-t border-emerald-100/50 bg-emerald-50/30 p-6 md:px-10 md:py-8 backdrop-blur-sm">
-             <Button
-                type="button"
-                variant="ghost"
-                onClick={handleBack}
-                disabled={currentStep === 0 || isSubmitting}
-                className={cn(
-                  "text-emerald-600 hover:text-emerald-800 hover:bg-emerald-100/50 px-6",
-                  currentStep === 0 && "invisible"
-                )}
-             >
-               <ArrowLeft className="w-5 h-5 mr-2" />
-               ย้อนกลับ
-             </Button>
-
-             <div className="flex items-center gap-4">
-               {/* Step Indicator Text (Mobile) */}
-               <span className="text-xs text-emerald-600/50 font-medium md:hidden">
-                 ขั้นตอนที่ {currentStep + 1}/{STEPS.length}
-               </span>
-
-               <Button
-                  type="button"
-                  onClick={handleNext}
-                  disabled={isSubmitting}
-                  className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-200 hover:shadow-emerald-300 transition-all px-8 py-6 h-auto text-base"
-               >
-                 {isSubmitting ? (
-                   <div className="flex items-center gap-2">
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>กำลังบันทึก...</span>
-                   </div>
-                 ) : currentStep === STEPS.length - 1 ? (
-                   <>
-                     บันทึกข้อมูล
-                     <CheckCircle2 className="w-5 h-5 ml-2" />
-                   </>
-                 ) : (
-                   <>
-                     ถัดไป
-                     <ArrowRight className="w-5 h-5 ml-2" />
-                   </>
-                 )}
-               </Button>
-             </div>
-          </CardFooter>
-        </Card>
+            <Button
+              type="button"
+              onClick={handleNext}
+              disabled={isSubmitting}
+              className="rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/20 hover:shadow-emerald-600/30 transition-all px-6 py-2.5 h-auto text-sm md:text-base font-medium flex-1 md:flex-none"
+            >
+              {isSubmitting ? (
+                <div className="flex items-center justify-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>กำลังบันทึก...</span>
+                </div>
+              ) : currentStep === STEPS.length - 1 ? (
+                <>
+                  บันทึก
+                  <CheckCircle2 className="w-4 h-4 md:w-5 md:h-5 ml-2" />
+                </>
+              ) : (
+                <>
+                  ถัดไป
+                  <ArrowRight className="w-4 h-4 md:w-5 md:h-5 ml-2" />
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );
