@@ -29,6 +29,7 @@ import { PropertyList } from './PropertyList';
 import { PropertySetupForm } from './PropertySetupForm';
 import { ServiceDetail } from './ServiceDetail';
 import { PlantShop } from './PlantShop';
+import { ServiceSelection } from './ServiceSelection';
 
 interface CustomerPortalProps {
   customer: any;
@@ -53,6 +54,8 @@ export const CustomerPortal: React.FC<CustomerPortalProps> = ({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<any>(null);
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
+  const [showServiceSelection, setShowServiceSelection] = useState(false);
+  const [selectedServiceData, setSelectedServiceData] = useState<any>(null);
 
   // Auto open/close sidebar based on screen size
   useEffect(() => {
@@ -69,12 +72,12 @@ export const CustomerPortal: React.FC<CustomerPortalProps> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // ถ้ายังไม่มีบริการ ให้แสดงหน้าเลือกบริการ
   useEffect(() => {
-    if (properties.length === 0) {
-      setActiveTab('properties');
-      setShowAddPropertyForm(true);
+    if (properties.length === 0 && !showServiceSelection && !showAddPropertyForm) {
+      setShowServiceSelection(true);
     }
-  }, [properties.length]);
+  }, [properties.length, showServiceSelection, showAddPropertyForm]);
 
   const menuItems = [
     { id: 'home', label: 'หน้าหลัก', icon: Home },
@@ -308,16 +311,46 @@ export const CustomerPortal: React.FC<CustomerPortalProps> = ({
         </div>
       )}
 
+      {/* Service Selection Modal - แสดงเมื่อยังไม่มีบริการ */}
+      {showServiceSelection && (
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+          <ServiceSelection
+            onComplete={(serviceData) => {
+              setSelectedServiceData(serviceData);
+              setShowServiceSelection(false);
+              setShowAddPropertyForm(true);
+            }}
+            onBack={properties.length > 0 ? () => setShowServiceSelection(false) : undefined}
+          />
+        </div>
+      )}
+
       {/* Add Property Form Modal */}
       {showAddPropertyForm && (
         <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
           <PropertySetupForm
             onComplete={async (data) => {
-              await onCreateProperty?.(data);
+              // รวมข้อมูลบริการที่เลือกไว้ด้วย
+              const propertyData = selectedServiceData 
+                ? { ...data, selectedService: selectedServiceData }
+                : data;
+              
+              await onCreateProperty?.(propertyData);
               setShowAddPropertyForm(false);
-              setActiveTab('properties');
+              setSelectedServiceData(null);
+              setActiveTab('home');
             }}
-            onCancel={() => setShowAddPropertyForm(false)}
+            onCancel={() => {
+              if (properties.length === 0) {
+                // ถ้ายังไม่มีบริการเลย กลับไปหน้าเลือกบริการ
+                setShowAddPropertyForm(false);
+                setShowServiceSelection(true);
+              } else {
+                // ถ้ามีบริการแล้ว แค่ปิด form
+                setShowAddPropertyForm(false);
+              }
+            }}
+            selectedService={selectedServiceData}
           />
         </div>
       )}

@@ -72,6 +72,7 @@ type PropertySetupData = {
 interface PropertySetupFormProps {
   onComplete: (data: PropertySetupData) => void | Promise<void>;
   onCancel?: () => void;
+  selectedService?: any; // ข้อมูลบริการที่ลูกค้าเลือก (ถ้ามี)
 }
 
 const PROPERTY_TYPES = [
@@ -95,7 +96,7 @@ const toMinutes = (timeStr: string) => {
   return h * 60 + m;
 };
 
-export const PropertySetupForm: React.FC<PropertySetupFormProps> = ({ onComplete, onCancel }) => {
+export const PropertySetupForm: React.FC<PropertySetupFormProps> = ({ onComplete, onCancel, selectedService }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -855,6 +856,37 @@ export const PropertySetupForm: React.FC<PropertySetupFormProps> = ({ onComplete
                 </Button>
               )}
             </div>
+
+            {/* แสดงบริการที่เลือก (ถ้ามี) */}
+            {selectedService && (
+              <div className="mb-6 p-4 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl border border-emerald-200/50">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center flex-shrink-0">
+                    <Sparkles className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-sm font-bold text-emerald-900">
+                        บริการที่เลือก
+                      </h3>
+                      <span className="text-xs bg-emerald-500 text-white px-2 py-0.5 rounded-full font-medium">
+                        {selectedService.serviceType === 'design' ? 'ออกแบบสวน' : 
+                         selectedService.serviceType === 'landscape' ? 'จัดสวน' : 
+                         selectedService.serviceType === 'maintenance' ? 'ดูแลสวน' : 'บริการ'}
+                      </span>
+                    </div>
+                    <p className="text-sm text-emerald-700">
+                      {selectedService.package?.name || 'แพ็คเกจพิเศษ'}
+                      {selectedService.package?.price && (
+                        <span className="ml-2 font-semibold">
+                          ฿{selectedService.package.price.toLocaleString()}
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Custom Progress Stepper - Horizontal on Desktop */}
             <div className="relative mx-auto max-w-2xl px-4">
